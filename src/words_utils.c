@@ -6,7 +6,7 @@
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 18:03:06 by gojeda            #+#    #+#             */
-/*   Updated: 2025/11/30 20:24:03 by gojeda           ###   ########.fr       */
+/*   Updated: 2025/12/17 17:47:01 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,55 +15,32 @@
 // Inicializamos la palabra
 void	lexer_start_word(t_lexer *lx)
 {
-	free(lx->word);
-	lx->word = NULL;
-	lx->word_len = 0;
+	if (!lx->current_word)
+		lx->current_word = token_new(TOKEN_WORD);
 }
 
 // Agregamos un caracter a la palabra
-int	lexer_add_char(t_lexer *lx, char c)
+void	lexer_add_char(t_lexer *lx, char c)
 {
 	char	*new;
+	char	*old;
 
-	new = malloc(lx->word_len + 2);
-	if (!new)
-		return (0);
-	if (lx->word)
-	{
-		ft_memcpy(new, lx->word, lx->word_len);
-		free(lx->word);
-	}
-	new[lx->word_len] = c;
-	new[lx->word_len + 1] = '\0';
-	lx->word = new;
-	lx->word_len++;
-	return (1);
+	if (!lx->current_seg)
+		lexer_start_segment(lx, lx->current_expand);
+	old = lx->current_seg->str;
+	new = ft_strjoin_char(old, c);
+	free(old);
+	lx->current_seg->str = new;
 }
 
 // Cerramos la palabra
 bool	lexer_end_word(t_lexer *lx)
 {
-	t_token	*tok;
-
-	if (lx->word_len == 0)
+	if (!lx->current_word)
 		return (true);
-	tok = token_new(TOKEN_WORD);
-	if (!tok)
+	lexer_end_segment(lx);
+	if (!lexer_add_token(lx, lx->current_word))
 		return (lx->error = 1, false);
-	tok->value = ft_strndup(lx->word, lx->word_len);
-	if (!tok->value)
-	{
-		free(tok);
-		lx->error = 1;
-		return (false);
-	}
-	if (!lexer_add_token(lx, tok))
-	{
-		free(tok->value);
-		free(tok);
-		lx->error = 1;
-		return (false);
-	}
-	lx->word_len = 0;
+	lx->current_word = NULL;
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:27:24 by gojeda            #+#    #+#             */
-/*   Updated: 2025/11/30 18:38:05 by gojeda           ###   ########.fr       */
+/*   Updated: 2025/12/17 18:20:40 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,18 @@ static void	normal_operator(t_lexer *lx, const char *line, size_t *i)
 	*i += operator_length(&line[*i]);
 }
 
-static void	normal_in_squote(int *state, size_t *i)
+static void	normal_in_squote(t_lexer *lx, int *state, size_t *i)
 {
+	lexer_end_segment(lx);
+	lx->current_expand = false;
 	*state = IN_SQUOTE;
 	(*i)++;
 }
 
-static void	normal_in_dquote(int *state, size_t *i)
+static void	normal_in_dquote(t_lexer *lx, int *state, size_t *i)
 {
+	lexer_end_segment(lx);
+	lx->current_expand = true;
 	*state = IN_DQUOTE;
 	(*i)++;
 }
@@ -46,12 +50,12 @@ void	handle_normal(t_lexer *lx, const char *line,
 	}
 	if (line[*i] == '\'')
 	{
-		normal_in_squote(state, i);
+		normal_in_squote(lx, state, i);
 		return ;
 	}
 	if (line[*i] == '"')
 	{
-		normal_in_dquote(state, i);
+		normal_in_dquote(lx, state, i);
 		return ;
 	}
 	if (line[*i] == ' ' || line[*i] == '\t')
@@ -60,6 +64,8 @@ void	handle_normal(t_lexer *lx, const char *line,
 		(*i)++;
 		return ;
 	}
+	lexer_start_word(lx);
+	lx->current_expand = true;
 	lexer_add_char(lx, line[*i]);
 	(*i)++;
 }

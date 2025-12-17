@@ -1,36 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strndup.c                                       :+:      :+:    :+:   */
+/*   segments_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/30 20:05:49 by gojeda            #+#    #+#             */
-/*   Updated: 2025/12/17 16:43:49 by gojeda           ###   ########.fr       */
+/*   Created: 2025/12/17 17:32:29 by gojeda            #+#    #+#             */
+/*   Updated: 2025/12/17 17:44:46 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../includes/lexer.h"
 
-char	*ft_strndup(const char *s, size_t n)
+//Inicializamos un segmento
+void	lexer_start_segment(t_lexer *lx, bool expand)
 {
-	size_t	i;
-	char	*dup;
+	lx->current_expand = expand;
+	lx->current_seg = segment_new(ft_strdup(""), expand);
+}
 
-	if (!s)
-		return (NULL);
-	i = 0;
-	while (s[i] && i < n)
-		i++;
-	dup = malloc(i + 1);
-	if (!dup)
-		return (NULL);
-	i = 0;
-	while (s[i] && i < n)
-	{
-		dup[i] = s[i];
-		i++;
-	}
-	dup[i] = '\0';
-	return (dup);
+//Cerramos el segmento
+void	lexer_end_segment(t_lexer *lx)
+{
+	if (!lx->current_seg)
+		return ;
+	token_add_segment(lx->current_word, lx->current_seg);
+	lx->current_seg = NULL;
 }

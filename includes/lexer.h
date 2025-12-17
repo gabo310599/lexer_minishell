@@ -6,7 +6,7 @@
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 13:45:58 by gojeda            #+#    #+#             */
-/*   Updated: 2025/11/30 20:16:24 by gojeda           ###   ########.fr       */
+/*   Updated: 2025/12/17 17:44:54 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,12 @@ typedef struct s_token
 /* Resultado del lexer: lista ligada de tokens */
 typedef struct s_lexer
 {
-	t_token	*head;
-	t_token	*tail;
-	int		error;
-	char	*word;
-	size_t	word_len;
+	t_token		*head;
+	t_token		*tail;
+	int			error;
+	t_token		*current_word;
+	t_segment	*current_seg;
+	bool		current_expand;
 }	t_lexer;
 
 /* CRUD */
@@ -91,8 +92,10 @@ void			handle_in_squote(t_lexer *lx, const char *line,
 void			handle_in_dquote(t_lexer *lx, const char *line,
 					size_t *i, int *state);
 
-/* Words functions */
+/* Words and segments functions */
 void			lexer_start_word(t_lexer *lx);
-int				lexer_add_char(t_lexer *lx, char c);
+void			lexer_add_char(t_lexer *lx, char c);
+void			lexer_end_segment(t_lexer *lx);
+void			lexer_start_segment(t_lexer *lx, bool expand);
 bool			lexer_end_word(t_lexer *lx);
 #endif

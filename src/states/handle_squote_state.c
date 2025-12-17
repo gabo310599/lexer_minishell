@@ -6,7 +6,7 @@
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:41:04 by gojeda            #+#    #+#             */
-/*   Updated: 2025/11/30 19:03:16 by gojeda           ###   ########.fr       */
+/*   Updated: 2025/12/17 18:22:31 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ void	handle_in_squote(t_lexer *lx, const char *line,
 	}
 	if (line[*i] == '\'')
 	{
+		lexer_end_segment(lx);
+		lx->current_expand = true;
 		*state = NORMAL;
 		(*i)++;
 		return ;

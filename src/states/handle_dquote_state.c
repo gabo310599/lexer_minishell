@@ -6,7 +6,7 @@
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:44:00 by gojeda            #+#    #+#             */
-/*   Updated: 2025/11/30 19:34:35 by gojeda           ###   ########.fr       */
+/*   Updated: 2025/12/17 18:24:31 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ void	handle_in_dquote(t_lexer *lx, const char *line,
 	c = line[*i];
 	if (c == '"')
 	{
+		lexer_end_segment(lx);
+		lx->current_expand = true;
 		*state = NORMAL;
 		(*i)++;
 		return ;

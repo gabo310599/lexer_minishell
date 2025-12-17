@@ -6,7 +6,7 @@
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 14:47:36 by gojeda            #+#    #+#             */
-/*   Updated: 2025/11/30 20:16:07 by gojeda           ###   ########.fr       */
+/*   Updated: 2025/12/17 16:59:52 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ t_lexer	*lexer_create(void)
 	lex->head = NULL;
 	lex->tail = NULL;
 	lex->error = 0;
-	lex->word = NULL;
-	lex->word_len = 0;
+	//lex->word = NULL;
+	//lex->word_len = 0;
 	return (lex);
 }
 
