@@ -6,7 +6,7 @@
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 15:10:47 by gojeda            #+#    #+#             */
-/*   Updated: 2025/12/17 17:00:01 by gojeda           ###   ########.fr       */
+/*   Updated: 2026/01/07 10:16:42 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ void	lexer_destroy(t_lexer *lex)
 
 	if (!lex)
 		return ;
-	//if (lex->word)
-	//	free(lex->word);
 	while (lex->head)
 	{
 		tmp = lex->head->next;

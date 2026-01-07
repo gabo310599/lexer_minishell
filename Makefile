@@ -42,12 +42,12 @@ $(NAME): $(OBJS)
 #-----------------------------------------------------------
 clean:
 	@rm -f $(OBJS)
-	@$(MAKE) -C libft clean > /dev/null
+	@$(MAKE) -C ../libft clean > /dev/null
 	@echo "🧹 Archivos objeto eliminados."
 
 fclean: clean
 	@rm -f $(NAME)
-	@$(MAKE) -C libft fclean > /dev/null
+	@$(MAKE) -C ../libft fclean > /dev/null
 	@echo "🧼 Todo limpio."
 
 re: fclean all
