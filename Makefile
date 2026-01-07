@@ -17,7 +17,7 @@ SRCS = src/crud.c \
 OBJS = $(SRCS:.c=.o)
 
 INCLUDES = -I include -I libft
-LIBFT = libft/libft.a
+LIBFT = ../libft/libft.a
 
 #-----------------------------------------------------------
 # Principal
@@ -25,7 +25,7 @@ LIBFT = libft/libft.a
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	@$(MAKE) -C libft > /dev/null
+	@$(MAKE) -C ../libft > /dev/null
 	@cp $(LIBFT) $(NAME)
 	@$(AR) $(NAME) $(OBJS)
 	@echo "📦 Librería $(NAME) creada correctamente."
