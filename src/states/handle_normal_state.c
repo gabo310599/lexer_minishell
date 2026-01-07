@@ -6,7 +6,7 @@
 /*   By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:27:24 by gojeda            #+#    #+#             */
-/*   Updated: 2025/12/17 18:20:40 by gojeda           ###   ########.fr       */
+/*   Updated: 2026/01/07 05:17:21 by gojeda           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,11 @@ static void	normal_operator(t_lexer *lx, const char *line, size_t *i)
 
 static void	normal_in_squote(t_lexer *lx, int *state, size_t *i)
 {
-	lexer_end_segment(lx);
+	lexer_start_word(lx);
+	if (lx->current_seg)
+		lexer_end_segment(lx);
+	if (!lx->current_seg)
+		lexer_start_segment(lx, false);
 	lx->current_expand = false;
 	*state = IN_SQUOTE;
 	(*i)++;
@@ -34,10 +38,23 @@ static void	normal_in_squote(t_lexer *lx, int *state, size_t *i)
 
 static void	normal_in_dquote(t_lexer *lx, int *state, size_t *i)
 {
-	lexer_end_segment(lx);
+	lexer_start_word(lx);
+	if (lx->current_seg)
+		lexer_end_segment(lx);
+	if (!lx->current_seg)
+		lexer_start_segment(lx, true);
 	lx->current_expand = true;
 	*state = IN_DQUOTE;
 	(*i)++;
+}
+
+static void	normal_text(t_lexer *lx, const char *line, size_t *i)
+{
+	if (!lx->current_word)
+		lexer_start_word(lx);
+	if (!lx->current_seg)
+		lexer_start_segment(lx, true);
+	lexer_add_char(lx, line[*i]);
 }
 
 void	handle_normal(t_lexer *lx, const char *line,
@@ -64,8 +81,6 @@ void	handle_normal(t_lexer *lx, const char *line,
 		(*i)++;
 		return ;
 	}
-	lexer_start_word(lx);
-	lx->current_expand = true;
-	lexer_add_char(lx, line[*i]);
+	normal_text(lx, line, i);
 	(*i)++;
 }

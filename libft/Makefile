@@ -6,7 +6,7 @@
 #    By: gojeda <gojeda@student.42madrid.com>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/11 16:33:59 by gojeda            #+#    #+#              #
-#    Updated: 2025/12/17 17:23:31 by gojeda           ###   ########.fr        #
+#    Updated: 2026/01/07 04:43:33 by gojeda           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ SRC = ft_atoi.c \
 		ft_split.c \
 		ft_strchr.c \
 		ft_strdup.c \
-		ft_strndup \
+		ft_strndup.c \
 		ft_striteri.c \
 		ft_strjoin.c \
 		ft_strjoin_char.c \
