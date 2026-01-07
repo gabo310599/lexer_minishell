@@ -1,80 +1,108 @@
 #include "../includes/lexer.h"
 #include <stdio.h>
 
-void print_lexer(t_lexer *lx)
+static const char *token_type_str(t_token_type type)
 {
-    t_token *tok = lx->head;
-    int tcount = 0;
-
-    while (tok)
-    {
-        printf("token[%d]: ", tcount++);
-        switch (tok->type)
-        {
-            case TOKEN_WORD:      printf("WORD\n"); break;
-            case TOKEN_PIPE:      printf("PIPE\n"); break;
-            case TOKEN_REDIR_IN:  printf("REDIR_IN\n"); break;
-            case TOKEN_REDIR_OUT: printf("REDIR_OUT\n"); break;
-            case TOKEN_HEREDOC:   printf("HEREDOC\n"); break;
-            case TOKEN_APPEND:    printf("APPEND\n"); break;
-            case TOKEN_EOF:       printf("EOF\n"); break;
-            default:              printf("UNKNOWN\n"); break;
-        }
-
-        t_segment *seg = tok->segments;
-        int scount = 0;
-        while (seg)
-        {
-            printf("      segment[%d]: \"%s\" (expand=%d)\n", scount++, seg->str, seg->expand);
-            seg = seg->next;
-        }
-
-        tok = tok->next;
-    }
+	if (type == TOKEN_WORD) return "WORD";
+	if (type == TOKEN_PIPE) return "PIPE";
+	if (type == TOKEN_REDIR_IN) return "REDIR_IN";
+	if (type == TOKEN_REDIR_OUT) return "REDIR_OUT";
+	if (type == TOKEN_HEREDOC) return "HEREDOC";
+	if (type == TOKEN_APPEND) return "APPEND";
+	if (type == TOKEN_EOF) return "EOF";
+	if (type == TOKEN_ERROR) return "ERROR";
+	return "UNKNOWN";
 }
 
-int main(void)
+static void	print_tokens(t_lexer *lx)
 {
-    const char *tests[] = {
-        "hola",
-        "hola mundo",
-        "\"hola\"",
-        "'hola'",
-        "\"hola\"mundo",
-        "hola\"mundo\"",
-        "'hola'mundo",
-        "'hola''mundo'",
-        "\"hola\"\"mundo\"",
-        "'hola'\"mundo\"",
-        "\"\"test",
-        "test\"\"",
-        "\"a\"\"b\"\"c\"",
-        "'a''b''c'",
-        "cmd \"arg1\"arg2 'arg3'arg4",
-        "echo 'a b' | cat > file.txt",
-        "ls -la | grep \"Jan\" > output.txt",
-        "<< EOF cat << EOF2",
-        "echo '' \"\" ''\"\"",
-        NULL
-    };
+	t_token		*tok;
+	t_segment	*seg;
+	int			i = 0;
+	int			j;
 
-    for (int i = 0; tests[i]; i++)
-    {
-        printf("================================\n");
-        printf("INPUT: %s\n", tests[i]);
-        printf("================================\n");
-        t_lexer *lx = lexer_tokenize(tests[i]);
-        if (lx)
-        {
-            print_lexer(lx);
-            lexer_destroy(lx);
-        }
-        else
-        {
-            printf("Lexer returned NULL (error)\n");
-        }
-        printf("\n");
-    }
+	tok = lx->head;
+	while (tok)
+	{
+		printf("token[%d]: %s\n", i, token_type_str(tok->type));
+		if (tok->type == TOKEN_WORD)
+		{
+			seg = tok->segments;
+			j = 0;
+			while (seg)
+			{
+				printf("      segment[%d]: \"%s\" (expand=%d)\n",
+					j, seg->str, seg->expand);
+				seg = seg->next;
+				j++;
+			}
+		}
+		tok = tok->next;
+		i++;
+	}
+}
 
-    return 0;
+static void	run_test(const char *input)
+{
+	t_lexer	*lx;
+
+	printf("================================\n");
+	printf("INPUT: %s\n", input);
+	printf("================================\n");
+
+	lx = lexer_tokenize(input);
+	if (!lx)
+	{
+		printf("LEXER ERROR\n\n");
+		return ;
+	}
+	print_tokens(lx);
+	lexer_destroy(lx);
+	printf("\n");
+}
+
+int	main(void)
+{
+	/* Palabras simples */
+	run_test("hola");
+	run_test("hola mundo");
+	run_test("ls -la");
+
+	/* Comillas simples y dobles */
+	run_test("'hola'");
+	run_test("\"hola\"");
+	run_test("'hola mundo'");
+	run_test("\"hola mundo\"");
+
+	/* Combinación de segmentos */
+	run_test("hola\"mundo\"");
+	run_test("\"hola\"mundo");
+	run_test("'hola'mundo");
+	run_test("'hola''mundo'");
+	run_test("\"hola\"\"mundo\"");
+	run_test("'hola'\"mundo\"");
+
+	/* Segmentos vacíos */
+	run_test("\"\"");
+	run_test("''");
+	run_test("\"\"test");
+	run_test("test\"\"");
+	run_test("''test");
+	run_test("test''");
+	run_test("echo '' \"\" ''\"\"");
+
+	/* Operadores */
+	run_test("ls|wc");
+	run_test("ls | wc");
+	run_test("cat < infile");
+	run_test("cat > outfile");
+	run_test("cat >> outfile");
+	run_test("cat << EOF");
+
+	/* Casos realistas */
+	run_test("echo 'a b' | cat > file.txt");
+	run_test("ls -la | grep \"Jan\" > output.txt");
+	run_test("cmd \"arg1\"arg2 'arg3'arg4");
+
+	return (0);
 }
